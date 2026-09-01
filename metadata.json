@@ -2,5 +2,7 @@
   "name": "Personal Gemini Journal",
   "description": "A secure, production-ready private journaling application with multi-turn Gemini reflection, mood tracking, and Cloud Firestore persistence.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

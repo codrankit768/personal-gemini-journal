@@ -187,7 +187,7 @@ async function generateContentWithFallback(
 }
 
 // Health check endpoint
-app.get('/api/health', (req, res) => {
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({
     status: 'ok',
     timestamp: Date.now(),
@@ -198,7 +198,7 @@ app.get('/api/health', (req, res) => {
 /**
  * Multi-turn Gemini Journaling Assistant Chat
  */
-app.post('/api/gemini/chat', async (req, res) => {
+app.post(['/api/gemini/chat', '/gemini/chat'], async (req, res) => {
   try {
     const { messages = [], journalDraft = '', mood = 'Neutral', userPrompt = '' } = req.body;
 
@@ -295,7 +295,7 @@ Current Journal Context:
  * AI-powered Mood & Reflection Insights Feature
  * Generates: Summary, Key Themes, Reflection Questions, Practical Next Steps
  */
-app.post('/api/gemini/insights', async (req, res) => {
+app.post(['/api/gemini/insights', '/gemini/insights'], async (req, res) => {
   try {
     const { title = '', content = '', mood = 'Neutral', chatSummary = '' } = req.body;
 
@@ -386,7 +386,7 @@ Remember:
 /**
  * AI-powered Weekly Reflection Synthesizer
  */
-app.post('/api/gemini/weekly-reflection', async (req, res) => {
+app.post(['/api/gemini/weekly-reflection', '/gemini/weekly-reflection'], async (req, res) => {
   try {
     const { entries = [] } = req.body;
 
@@ -470,7 +470,7 @@ No medical diagnoses. Strictly structured JSON.`;
   }
 });
 
-// Vite middleware & Static Server Setup
+// Vite middleware & Static Server Setup (For Container / Local / Cloud Run execution)
 async function startServer() {
   if (process.env.NODE_ENV !== 'production') {
     const vite = await createViteServer({
@@ -491,4 +491,10 @@ async function startServer() {
   });
 }
 
-startServer();
+// Only start standalone HTTP server when not running in Vercel serverless environment
+if (!process.env.VERCEL) {
+  startServer();
+}
+
+export default app;
+export { app };
