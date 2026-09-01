@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "JournalEntry": {
+      "title": "JournalEntry",
+      "description": "User journal entry with reflection content, mood, and AI insights",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the journal entry"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owning user"
+        },
+        "userEmail": {
+          "type": "string",
+          "description": "Email of the owning user"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the journal entry",
+          "maxLength": 500
+        },
+        "content": {
+          "type": "string",
+          "description": "Main text content of the journal reflection",
+          "maxLength": 20000
+        },
+        "mood": {
+          "type": "string",
+          "description": "Selected mood dimension",
+          "enum": ["Happy", "Calm", "Neutral", "Sad", "Frustrated", "Anxious", "Motivated"]
+        },
+        "chatHistory": {
+          "type": "array",
+          "description": "Multi-turn Gemini chat messages associated with this entry"
+        },
+        "insights": {
+          "type": "object",
+          "description": "AI-generated structured reflection insights"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp when the entry was created"
+        },
+        "updatedAt": {
+          "type": "number",
+          "description": "Timestamp when the entry was last modified"
+        }
+      },
+      "required": ["id", "userId", "content", "createdAt", "updatedAt"]
+    },
+    "WeeklyReflection": {
+      "title": "WeeklyReflection",
+      "description": "AI-synthesized weekly reflection over journal entries",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the weekly reflection"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the owning user"
+        },
+        "reflection": {
+          "type": "string",
+          "description": "Narrative weekly retrospective text",
+          "maxLength": 10000
+        },
+        "keyThemes": {
+          "type": "array",
+          "description": "Overarching themes identified across the week"
+        },
+        "suggestedFocus": {
+          "type": "array",
+          "description": "Mindful intentions for the upcoming week"
+        },
+        "moodDistribution": {
+          "type": "object",
+          "description": "Breakdown of logged moods during the period"
+        },
+        "entryCount": {
+          "type": "number",
+          "description": "Count of entries synthesized"
+        },
+        "createdAt": {
+          "type": "number",
+          "description": "Timestamp when the reflection was generated"
+        }
+      },
+      "required": ["id", "userId", "reflection", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/entries/{entryId}": {
+      "schema": "JournalEntry",
+      "description": "Isolated journal entries belonging to the authenticated user"
+    },
+    "/users/{userId}/weeklyReflections/{reflectionId}": {
+      "schema": "WeeklyReflection",
+      "description": "Weekly AI retrospectives synthesized for the authenticated user"
+    }
+  }
+}

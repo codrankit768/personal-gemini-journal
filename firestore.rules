@@ -1,0 +1,38 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Default Deny All
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Isolated User Data Hierarchy
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      // Journal Entries Subcollection
+      match /entries/{entryId} {
+        allow read: if request.auth != null && request.auth.uid == userId;
+        
+        allow create: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.userId == userId
+          && request.resource.data.content is string
+          && request.resource.data.content.size() > 0
+          && request.resource.data.content.size() <= 20000;
+          
+        allow update: if request.auth != null 
+          && request.auth.uid == userId 
+          && request.resource.data.userId == userId
+          && (!('userId' in request.resource.data) || request.resource.data.userId == resource.data.userId);
+          
+        allow delete: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // AI Generated Weekly Reflections Subcollection
+      match /weeklyReflections/{reflectionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+  }
+}
